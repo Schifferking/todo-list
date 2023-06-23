@@ -23,9 +23,11 @@ export default class DOMCreator {
   createNavbar() {
     // consider adding more elements
     let ul = this.createUl();
-    let todoButton = this.createButton('New to-do');
-    todoButton.addEventListener('click', this.loadForm);
+    ul.addEventListener('click', this.handleNavbarButtons);
+    let todoButton = this.createButton('New to-do', undefined, 'new-to-do');
+    let projectButton = this.createButton('New project', undefined, 'new-project');
     ul.appendChild(this.createLi(todoButton));
+    ul.appendChild(this.createLi(projectButton));
     return ul;
   }
 
@@ -34,13 +36,78 @@ export default class DOMCreator {
     return ul;
   }
 
-  loadForm = () => {
+  handleNavbarButtons = (event) => {
+    if (event.target.className === 'new-to-do')
+      this.loadForm(this.formCreator.createToDoForm, this.validateToDoForm);
+    if (event.target.className === 'new-project')
+      this.loadForm(this.formCreator.createProjectForm, this.validateProjectForm);
+  }
+
+  loadForm = (createFormFunction, validateFormFunction) => {
     if (document.querySelector('form') === null) {
       let main = document.querySelector('main');
       const cancelButton = this.createButton('Cancel', 'button');
-      const form = this.formCreator.createToDoForm(cancelButton);
+      const form = createFormFunction(cancelButton);
+      form.addEventListener('click', (event) => {
+        this.handleFormButtons(event, validateFormFunction);
+      });
       main.appendChild(form);
     }
+  }
+
+  createButton(content, type='', className='') {
+    let newButton = document.createElement('button');
+    newButton.textContent = content;
+    if (type === 'button')
+      newButton.setAttribute('type', type);
+    if (className)
+      newButton.classList.add(className);
+    return newButton;
+  }
+
+  handleFormButtons = (event, validateFunction) => {
+    // Cancel button 
+    if (event.target.type === 'button')
+      this.removeForm();
+    // Submit button
+    if (event.target.type === 'submit')
+      validateFunction(event);
+  }
+
+  removeForm() {
+    const form = document.querySelector('form');
+    form.remove();
+  }
+
+  validateToDoForm = (event) => {
+    const formData = this.gatherToDoFormData(event);
+    if (formData.includes(''))
+      // Add something to notify error to user (maybe put it in todo.js)
+      return;
+    this.removeForm();
+  }
+
+  gatherToDoFormData(event) {
+    event.preventDefault();
+    const todoTitle = document.querySelector("[name='todo-title']").value;
+    const todoDescription = document.querySelector("[name='todo-description']").value;
+    const todoDueDate = document.querySelector("[name='todo-dueDate']").value;
+    const todoPriority = document.querySelector("[name='todo-priority']").value;
+    return [todoTitle, todoDescription, todoDueDate, todoPriority];
+  }
+
+  validateProjectForm = (event) => {
+    const formData = this.gatherProjectFormData(event);
+    if (formData === '')
+      // Add something to notify error to user (maybe put it in todo.js)
+      return;
+    this.removeForm();
+  }
+
+  gatherProjectFormData(event) {
+    event.preventDefault();
+    const projectName = document.querySelector("[name='project-name']").value;
+    return projectName;
   }
 
   createLi(element) {
@@ -49,17 +116,14 @@ export default class DOMCreator {
     return li;
   }
 
-  createButton(content, type='') {
-    let newButton = document.createElement('button');
-    newButton.textContent = content;
-    if (type === 'button')
-      newButton.setAttribute('type', type);
-    return newButton;
+  createMain() {
+    const main = document.createElement('main');
+    this.script.parentNode.insertBefore(main, this.script);
   }
 
-  removeForm = () => {
-    let form = document.querySelector('form');
-    form.remove();
+  createFooter() {
+    const footer = document.createElement('footer');
+    this.script.parentNode.insertBefore(footer, this.script);
   }
 
   createSidebar() {
@@ -81,15 +145,5 @@ export default class DOMCreator {
     let h2 = document.createElement('h2');
     h2.textContent = content;
     return h2;
-  }
-
-  createMain() {
-    const main = document.createElement('main');
-    this.script.parentNode.insertBefore(main, this.script);
-  }
-
-  createFooter() {
-    const footer = document.createElement('footer');
-    this.script.parentNode.insertBefore(footer, this.script);
   }
 }
