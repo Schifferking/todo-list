@@ -1,4 +1,4 @@
-import DOMCreator from './dom-creator.js';
+import PageController from "./page-controller.js";
 
-const myDOMCreator = new DOMCreator;
-myDOMCreator.loadPage();
+const myPageController = new PageController;
+myPageController.loadPage();

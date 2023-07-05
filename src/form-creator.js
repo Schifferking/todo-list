@@ -5,15 +5,20 @@ export default class FormCreator {
     const textInputNames = ['todo-title', 'todo-description'];
     const labels = this.createLabels(labelContents);
     const inputs = this.createToDoInputs(textInputNames);
-    let elements = this.appendInputsToLabels(labels, inputs);
-    elements = elements.concat(this.appendButtons(button, 'to-do'));
+    let elements = this.joinLists(
+      this.appendInputsToLabels(labels, inputs),
+      this.appendButtons(button, 'to-do'));
     return this.appendElementsToForm(form, elements);
   }
 
   createForm() {
     let form = document.createElement('form');
-    form.setAttribute('method', 'post');
+    this.assignAttribute(form, 'method', 'post');
     return form;
+  }
+
+  assignAttribute(element ,attribute, value='') {
+    element.setAttribute(attribute, value);
   }
 
   createLabels(labelContents) {
@@ -32,7 +37,7 @@ export default class FormCreator {
   createToDoInputs(textInputNames) {
     const textInputs = this.createTextInputs(textInputNames);
     const distinctInputs = this.createDistinctInputs();
-    return textInputs.concat(distinctInputs);
+    return this.joinLists(textInputs, distinctInputs);
   }
 
   createTextInputs(inputNames) {
@@ -44,11 +49,19 @@ export default class FormCreator {
 
   createInput(name, type='') {
     const input = document.createElement('input');
-    input.setAttribute('name', name);
-    input.setAttribute('required', '');
-    if (type)
-      input.setAttribute('type', type);
+    let attributes = ['name', 'required'];
+    let values = [name, ''];
+    if (type) {
+      attributes.push('type');
+      values.push(type);
+    }
+    this.assignAttributes(input, attributes, values);
     return input;
+  }
+
+  assignAttributes(element, attributes, values) {
+    for (let i = 0; i < attributes.length; i++)
+      this.assignAttribute(element, attributes[i], values[i]);
   }
 
   createDistinctInputs() {
@@ -60,21 +73,23 @@ export default class FormCreator {
 
   createDatetimeLocalInput(name) {
     const input = this.createInput(name, 'datetime-local');
-    input.setAttribute('value', this.getCurrentDate());
+    this.assignAttribute(input, 'value', this.getCurrentDate());
     return input;
   }
 
   getCurrentDate() {
-    // Returns date in the format yyyy-MM-DD-Thh:mm
+    // Returns in the format yyyy-MM-DD-Thh:mm
     return new Date().toJSON().slice(0,19);
   }
 
   createNumberInput(name) {
     // For the moment it's only used for a priority input
     const input = this.createInput(name, 'number');
-    input.setAttribute('min', '1');
-    input.setAttribute('max', '3');
-    input.setAttribute('placeholder', '1');
+    let minValue = '1';
+    let maxValue = '3';
+    let attributes = ['min', 'max', 'placeholder'];
+    let values = [minValue, maxValue, minValue];
+    this.assignAttributes(input, attributes, values);
     return input;
   }
 
@@ -84,6 +99,10 @@ export default class FormCreator {
     for (let i = 0; i < labels.length; i++)
       labelsDeepCopy[i].appendChild(inputsDeepCopy[i]);
     return labelsDeepCopy;
+  }
+
+  joinLists(firstList, secondList) {
+    return firstList.concat(secondList);
   }
 
   deepCloneNodes(nodes) {
@@ -100,8 +119,9 @@ export default class FormCreator {
 
   createSubmitButton(value) {
     const submitButton = document.createElement('input');
-    submitButton.setAttribute('type', 'submit');
-    submitButton.setAttribute('value', `Create ${value}`);
+    let attributes = ['type', 'value'];
+    let values = ['submit', `Create ${value}`];
+    this.assignAttributes(submitButton, attributes, values);
     return submitButton;
   }
 
@@ -110,5 +130,15 @@ export default class FormCreator {
     for (const element of elementsDeepCopy)
       form.appendChild(element);
     return form;
+  }
+
+  createProjectForm = (button) => {
+    const form = this.createForm();
+    const label = this.createLabels(['*Name:']);
+    const input = this.createTextInputs(['project-name']);
+    let elements = this.joinLists(
+      this.appendInputsToLabels(label, input),
+      this.appendButtons(button, 'project'));
+    return this.appendElementsToForm(form, elements);
   }
 }
