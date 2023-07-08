@@ -56,4 +56,18 @@ export default class EventListenerAgregator {
     if (buttonType === 'submit')
       validateFunction(event, args);
   }
+
+  addProjectsListListener(args={}) {
+    let projectsList = document.querySelector('.projects-list');
+    projectsList.addEventListener('click', (event) =>
+      this.handleProjectButtons(event, args));
+  }
+
+  handleProjectButtons(event, args) {
+    let className = this.getAttributeFrom(event.target, 'className');
+    if (className === 'project-button') {
+      let projectName = this.getAttributeFrom(event.target, 'innerText');
+      args['dco'].replaceProjectContainer(projectName, { pm: args['pm'] });
+    }
+  }
 }

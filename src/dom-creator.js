@@ -71,7 +71,8 @@ export default class DOMCreator {
 
   addProjectToSidebar(projectName) {
     let projectsList = document.querySelector('.projects-list');
-    const newProject = this.createHeading(projectName, 'h2');
+    const newProject = this.createButton(
+      projectName, { className: 'project-button' });
     projectsList.appendChild(this.createLi(newProject));
   }
 
@@ -98,8 +99,9 @@ export default class DOMCreator {
 
   createProjectsList() {
     let projectsList = this.createUl('projects-list');
-    const defaultH2 = this.createHeading('default', 'h2');
-    projectsList.appendChild(this.createLi(defaultH2));
+    let defaultButton = this.createButton(
+      'default', { className: 'project-button' });
+    projectsList.appendChild(this.createLi(defaultButton));
     return projectsList;
   }
 
@@ -112,12 +114,12 @@ export default class DOMCreator {
     this.script.parentNode.insertBefore(main, this.script);
   }
 
-  createProjectContainer(projectClassName) {
+  createProjectContainer(projectClassName, args={}) {
     // Consider a method in another module to change this line
     let projectName = projectClassName.replace('-container', '');
     let projectContainer = this.createDiv(projectClassName);
     let projectHeading = this.createHeading(projectName, 'h1');
-    let todoList = this.createUl('todo-list');
+    let todoList = this.loadTodos(projectName, args);
     this.appendListElements(projectContainer, [projectHeading, todoList]);
     return projectContainer;
   }
@@ -126,6 +128,23 @@ export default class DOMCreator {
     let div = document.createElement('div');
     div.classList.add(className);
     return div;
+  }
+  
+  loadTodos(projectName, args) {
+    let todoList = this.createUl('todo-list');
+    if (args['pm']) {
+      let projectObject = args['pm'].searchProject(projectName);
+      let todos = this.createTodos(projectObject.todos);
+      this.appendListElements(todoList, todos);
+    }
+    return todoList;
+  }
+
+  createTodos(todos) {
+    let liTodos = [];
+    for (let todo of todos)
+      liTodos.push(this.createTodo(todo.title, todo.description));
+    return liTodos;
   }
 
   createFooter() {
@@ -148,9 +167,10 @@ export default class DOMCreator {
     return document.querySelector('.content > div');
   }
 
-  replaceProjectContainer(projectClassName) {
+  replaceProjectContainer(projectClassName, args={}) {
     let content = document.querySelector('.content');
-    let newProjectContainer = this.createProjectContainer(projectClassName);
+    let newProjectContainer = this.createProjectContainer(
+      projectClassName, args);
     this.removeProjectContainer();
     content.appendChild(newProjectContainer);
   }
@@ -178,7 +198,11 @@ export default class DOMCreator {
   }
 
   loadTodo(todo) {
-    let projectContainer = this.getCurrentProjectContainer();
-    projectContainer.appendChild(todo);
+    let todoList = this.getTodoList();
+    todoList.appendChild(todo);
+  }
+
+  getTodoList() {
+    return document.querySelector('.todo-list');
   }
 }

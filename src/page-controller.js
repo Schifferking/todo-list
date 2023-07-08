@@ -13,10 +13,14 @@ export default class PageController {
 
   loadPage() {
     this.myDCO.loadPage();
-    this.myELA.addNavbarListener(
-      {dco: this.myDCO,
-       pm: this.myPM,
-       validateFunctions: this.getValidateFunctions()});
+    this.myELA.addNavbarListener(this.getNavBarArguments());
+    this.myELA.addProjectsListListener({ dco: this.myDCO, pm: this.myPM });
+  }
+
+  getNavBarArguments() {
+    return { dco: this.myDCO,
+             pm: this.myPM,
+             validateFunctions: this.getValidateFunctions() };
   }
 
   getValidateFunctions() {
