@@ -10,7 +10,8 @@ export default class ProjectManager {
     this.projectList.push(project);
   }
 
-  validateProjectForm = (event, dco, projectObject=Project) => {
+  validateProjectForm = (event, args, projectObject=Project) => {
+    let dco = args['dco'];
     const formData = this.gatherProjectFormData(event);
     if (formData === '') {
       // Add something to notify error to user (maybe create a modal)

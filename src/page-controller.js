@@ -1,18 +1,26 @@
 import DOMCreator from './dom-creator.js';
 import EventListenerAgregator from './event-listener-agregator.js';
 import ProjectManager from './project-manager.js';
+import TodoManager from './todo-manager.js';
 
 export default class PageController {
   constructor() {
-    this.myDOMCreator = new DOMCreator();
-    this.myEventListenerAgregator = new EventListenerAgregator();
-    this.myProjectManager = new ProjectManager();
+    this.myDCO = new DOMCreator();
+    this.myELA = new EventListenerAgregator();
+    this.myPM = new ProjectManager();
+    this.myTM = new TodoManager();
   }
 
   loadPage() {
-    // Add validateToDoForm to test it
-    this.myDOMCreator.loadPage();
-    this.myEventListenerAgregator.addNavbarListener(this.myDOMCreator,
-      [this.myProjectManager.validateProjectForm]);
+    this.myDCO.loadPage();
+    this.myELA.addNavbarListener(
+      {dco: this.myDCO,
+       pm: this.myPM,
+       validateFunctions: this.getValidateFunctions()});
+  }
+
+  getValidateFunctions() {
+    let functions = [this.myTM.validateTodoForm, this.myPM.validateProjectForm];
+    return functions;
   }
 }

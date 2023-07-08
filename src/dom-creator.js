@@ -54,7 +54,7 @@ export default class DOMCreator {
     }
   }
 
-  createButton(content, args) {
+  createButton(content, args={}) {
     let newButton = document.createElement('button');
     newButton.textContent = content;
     if (args['type'])
@@ -75,6 +75,12 @@ export default class DOMCreator {
     projectsList.appendChild(this.createLi(newProject));
   }
 
+  createHeading(content, heading) {
+    let headingElement = document.createElement(heading);
+    headingElement.textContent = content;
+    return headingElement;
+  }
+
   createLi(element) {
     let li = document.createElement('li');
     li.appendChild(element);
@@ -88,12 +94,6 @@ export default class DOMCreator {
     let listElements = [projectsH1, projectsList];
     this.appendListElements(nav, listElements);
     this.script.parentNode.insertBefore(nav, this.script);
-  }
-
-  createHeading(content, heading) {
-    let headingElement = document.createElement(heading);
-    headingElement.textContent = content;
-    return headingElement;
   }
 
   createProjectsList() {
@@ -113,9 +113,12 @@ export default class DOMCreator {
   }
 
   createProjectContainer(projectClassName) {
+    // Consider a method in another module to change this line
+    let projectName = projectClassName.replace('-container', '');
     let projectContainer = this.createDiv(projectClassName);
+    let projectHeading = this.createHeading(projectName, 'h1');
     let todoList = this.createUl('todo-list');
-    projectContainer.appendChild(todoList);
+    this.appendListElements(projectContainer, [projectHeading, todoList]);
     return projectContainer;
   }
 
@@ -137,8 +140,12 @@ export default class DOMCreator {
   }
 
   removeProjectContainer() {
-    const projectContainer = document.querySelector('.content > div');
+    const projectContainer = this.getCurrentProjectContainer();
     projectContainer.remove();
+  }
+
+  getCurrentProjectContainer() {
+    return document.querySelector('.content > div');
   }
 
   replaceProjectContainer(projectClassName) {
@@ -149,8 +156,29 @@ export default class DOMCreator {
   }
 
   getCurrentProjectName() {
-    const projectContainer = document.querySelector('.content > div');
+    const projectContainer = this.getCurrentProjectContainer();
     let projectClassName = projectContainer.className;
     return projectClassName.split('-')[0];
+  }
+
+  createTodo(title, description) {
+    let button = this.createButton('');
+    let todoInfo = this.createParagraph(
+      `Title: ${title}, Description: ${description}`);
+    // Maybe change the create li to accept two or more elements
+    let li = this.createLi(button);
+    li.appendChild(todoInfo);
+    return li;
+  }
+
+  createParagraph(content) {
+    let paragraph = document.createElement('p');
+    paragraph.textContent = content;
+    return paragraph;
+  }
+
+  loadTodo(todo) {
+    let projectContainer = this.getCurrentProjectContainer();
+    projectContainer.appendChild(todo);
   }
 }

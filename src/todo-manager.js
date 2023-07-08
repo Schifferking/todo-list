@@ -1,24 +1,33 @@
 import Todo from './todo.js';
 
-export default class ToDOManager {
-  validateToDoForm = (event, dco) => {
-    const formData = this.gatherToDoFormData(event);
+export default class TodoManager {
+  validateTodoForm = (event, args) => {
+    const formData = this.gatherTodoFormData(event);
     if (formData.includes('')) {
       // Add something to notify error to user (maybe use a modal)
       console.log("Couldn't create To-do");
       return;
     }
-    // Create To-do object
-    let newToDo = new Todo(formData[0], formData[1], formData[2], formData[3]);
-    // Select project
+    this.addTodoToProject(formData, args);
+  }
+
+  createTodo(formData) {
+    return new Todo({title: formData[0], description: formData[1],
+                     dueDate: formData[2], priority: formData[3]});
+  }
+
+  addTodoToProject(formData, args) {
+    let pm = args['pm'];
+    let dco = args['dco'];
+    let newTodo = this.createTodo(formData);
     let projectName = dco.getCurrentProjectName();
-    // Get project object
-    // Add to-do to project object
-    // Create li with to-do information
+    let projectObject = pm.searchProject(projectName);
+    projectObject.addTodo(newTodo);
+    dco.loadTodo(dco.createTodo(newTodo.title, newTodo.description));
     dco.removeForm();
   }
 
-  gatherToDoFormData = (event) => {
+  gatherTodoFormData = (event) => {
     event.preventDefault();
     const todoTitle = document.querySelector("[name='todo-title']").value;
     const todoDescription = document.querySelector("[name='todo-description']").value;
