@@ -12,7 +12,7 @@ export default class ProjectManager {
 
   validateProjectForm = (event, args, projectObject=Project) => {
     let dco = args['dco'];
-    const formData = this.gatherProjectFormData(event);
+    const formData = this.gatherProjectFormData(event, dco);
     if (formData === '') {
       // Add something to notify error to user (maybe create a modal)
       console.log("Couldn't create Project");
@@ -24,9 +24,9 @@ export default class ProjectManager {
     dco.loadProject(formDataLowercase);
   }
 
-  gatherProjectFormData(event) {
+  gatherProjectFormData(event, dco) {
     event.preventDefault();
-    const projectName = document.querySelector("[name='project-name']").value;
+    const projectName = dco.getElement("[name='project-name']").value;
     return projectName;
   }
 
@@ -48,5 +48,4 @@ export default class ProjectManager {
   }
 
   // Function to remove project
-  // Function to select project
 }

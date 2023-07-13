@@ -2,8 +2,9 @@ import Todo from './todo.js';
 
 export default class TodoManager {
   validateTodoForm = (event, args) => {
-    const formData = this.gatherTodoFormData(event);
-    if (formData.includes('')) {
+    let formData = this.gatherTodoFormData(event, args['dco']);
+    let result = this.validateFormData(formData);
+    if (result) {
       // Add something to notify error to user (maybe use a modal)
       console.log("Couldn't create To-do");
       return;
@@ -11,9 +12,28 @@ export default class TodoManager {
     this.addTodoToProject(formData, args);
   }
 
+  gatherTodoFormData = (event, dco) => {
+    event.preventDefault();
+    const todoTitle = dco.getElement("[name='todo-title']").value;
+    const todoDescription = dco.getElement("[name='todo-description']").value;
+    const todoDueDate = dco.getElement("[name='todo-dueDate']").value;
+    const todoPriority = dco.getElement("[name='todo-priority']").value;
+    return { title: todoTitle, 
+             description: todoDescription,
+             dueDate: todoDueDate,
+             priority: todoPriority };
+  }
+
+  validateFormData(formData) {
+    let values = Object.values(formData);
+    return values.some(value => value === '');
+  }
+
   createTodo(formData) {
-    return new Todo({title: formData[0], description: formData[1],
-                     dueDate: formData[2], priority: formData[3]});
+    return new Todo({ title: formData['title'],
+                      description: formData['description'],
+                      dueDate: formData['dueDate'],
+                      priority: formData['priority'] });
   }
 
   addTodoToProject(formData, args) {
@@ -25,14 +45,5 @@ export default class TodoManager {
     projectObject.addTodo(newTodo);
     dco.loadTodo(dco.createTodo(newTodo.title, newTodo.description));
     dco.removeForm();
-  }
-
-  gatherTodoFormData = (event) => {
-    event.preventDefault();
-    const todoTitle = document.querySelector("[name='todo-title']").value;
-    const todoDescription = document.querySelector("[name='todo-description']").value;
-    const todoDueDate = document.querySelector("[name='todo-dueDate']").value;
-    const todoPriority = document.querySelector("[name='todo-priority']").value;
-    return [todoTitle, todoDescription, todoDueDate, todoPriority];
   }
 }

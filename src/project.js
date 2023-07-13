@@ -24,6 +24,10 @@ export default class Project {
     this._todos = value;
   }
 
+  searchTodo(todoTitle) {
+    return this.todos.find(todo => todo.title === todoTitle);
+  }
+
   removeTodo() {
     // get the index of the element to be removed (create other function for it)
     // use the next line

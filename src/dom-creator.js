@@ -6,6 +6,22 @@ export default class DOMCreator {
     this.formCreator = new formCreatorObject();
   }
 
+  get script() {
+    return this._script;
+  }
+
+  set script(value) {
+    this._script = value;
+  }
+
+  get formCreator() {
+    return this._formCreator;
+  }
+
+  set formCreator(value) {
+    this._formCreator = value;
+  }
+
   loadPage() {
     this.createHeader();
     this.createSidebar();
@@ -46,12 +62,16 @@ export default class DOMCreator {
   }
 
   loadForm = (createFormFunction) => {
-    if (document.querySelector('form') === null) {
-      let main = document.querySelector('main');
+    if (this.getElement('form') === null) {
+      let main = this.getElement('main');
       const cancelButton = this.createButton('Cancel', {type: 'button'});
       const form = createFormFunction(cancelButton);
       main.appendChild(form);
     }
+  }
+
+  getElement(query) {
+    return document.querySelector(query);
   }
 
   createButton(content, args={}) {
@@ -65,12 +85,16 @@ export default class DOMCreator {
   }
 
   removeForm() {
-    const form = document.querySelector('form');
-    form.remove();
+    const form = this.getElement('form');
+    this.removeElement(form);
+  }
+
+  removeElement(element) {
+    element.remove();
   }
 
   addProjectToSidebar(projectName) {
-    let projectsList = document.querySelector('.projects-list');
+    let projectsList = this.getElement('.projects-list');
     const newProject = this.createButton(
       projectName, { className: 'project-button' });
     projectsList.appendChild(this.createLi(newProject));
@@ -160,15 +184,15 @@ export default class DOMCreator {
 
   removeProjectContainer() {
     const projectContainer = this.getCurrentProjectContainer();
-    projectContainer.remove();
+    this.removeElement(projectContainer);
   }
 
   getCurrentProjectContainer() {
-    return document.querySelector('.content > div');
+    return this.getElement('.content > div');
   }
 
   replaceProjectContainer(projectClassName, args={}) {
-    let content = document.querySelector('.content');
+    let content = this.getElement('.content');
     let newProjectContainer = this.createProjectContainer(
       projectClassName, args);
     this.removeProjectContainer();
@@ -198,11 +222,24 @@ export default class DOMCreator {
   }
 
   loadTodo(todo) {
-    let todoList = this.getTodoList();
+    let todoList = this.getElement('.todo-list');
     todoList.appendChild(todo);
   }
 
-  getTodoList() {
-    return document.querySelector('.todo-list');
+  obtainTodoTitle(liElement) {
+    let todoInfo = liElement.querySelector('p');
+    let todoTitle = todoInfo.textContent.split(',');
+    todoTitle = todoTitle[0].split(': ');
+    return todoTitle[1];
+  }
+
+  updateTodo(todoElement, todoData) {
+    let p = this.createParagraph(
+      `Due date: ${todoData['dueDate']}, priority: ${todoData['priority']}`);
+    todoElement.appendChild(p);
+  }
+
+  getAttributeFrom(element, attribute) {
+    return element[attribute];
   }
 }
