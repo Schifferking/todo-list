@@ -29,13 +29,6 @@ export default class TodoManager {
     return values.some(value => value === '');
   }
 
-  createTodo(formData) {
-    return new Todo({ title: formData['title'],
-                      description: formData['description'],
-                      dueDate: formData['dueDate'],
-                      priority: formData['priority'] });
-  }
-
   addTodoToProject(formData, args) {
     let pm = args['pm'];
     let dco = args['dco'];
@@ -45,5 +38,12 @@ export default class TodoManager {
     projectObject.addTodo(newTodo);
     dco.loadTodo(dco.createTodo(newTodo.title, newTodo.description));
     dco.removeForm();
+  }
+
+  createTodo(formData) {
+    return new Todo({ title: formData['title'],
+                      description: formData['description'],
+                      dueDate: formData['dueDate'],
+                      priority: formData['priority'] });
   }
 }

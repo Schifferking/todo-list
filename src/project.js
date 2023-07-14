@@ -28,9 +28,14 @@ export default class Project {
     return this.todos.find(todo => todo.title === todoTitle);
   }
 
-  removeTodo() {
-    // get the index of the element to be removed (create other function for it)
-    // use the next line
-    // this.todos = this.todos.slice(0, n).concat(this.todos.slice(n + 1))
+  removeTodo(todoObject) {
+    let todoIndex = this.getTodoIndex(todoObject);
+    this.todos = this.todos.slice(0, todoIndex).
+      concat(this.todos.slice(todoIndex + 1));
+  }
+
+  getTodoIndex(todoObject) {
+    return this.todos.findIndex(todo =>
+      JSON.stringify(todo) === JSON.stringify(todoObject));
   }
 }

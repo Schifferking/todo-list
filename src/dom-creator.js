@@ -206,12 +206,12 @@ export default class DOMCreator {
   }
 
   createTodo(title, description) {
-    let button = this.createButton('');
+    let createButton = this.createButton('Mark complete');
+    let deleteButton = this.createButton('Delete', {className: 'delete'});
     let todoInfo = this.createParagraph(
       `Title: ${title}, Description: ${description}`);
-    // Maybe change the create li to accept two or more elements
-    let li = this.createLi(button);
-    li.appendChild(todoInfo);
+    let li = this.createLi(createButton);
+    this.appendListElements(li, [deleteButton, todoInfo]);
     return li;
   }
 

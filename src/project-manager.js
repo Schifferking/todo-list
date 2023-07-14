@@ -6,37 +6,49 @@ export default class ProjectManager {
     this.addProject(new projectObject('default'));
   }
 
-  addProject(project) {
-    this.projectList.push(project);
-  }
-
-  validateProjectForm = (event, args, projectObject=Project) => {
-    let dco = args['dco'];
-    const formData = this.gatherProjectFormData(event, dco);
-    if (formData === '') {
-      // Add something to notify error to user (maybe create a modal)
-      console.log("Couldn't create Project");
-      return;
-    }
-    const formDataLowercase = formData.toLowerCase();
-    let newProject = new projectObject(formDataLowercase);
-    this.addProject(newProject);
-    dco.loadProject(formDataLowercase);
-  }
-
-  gatherProjectFormData(event, dco) {
+  handleProjectCreation = (event, args) => {
     event.preventDefault();
+    const formData = this.gatherProjectFormData(args['dco']);
+    let result = this.validateProjectForm(formData);
+    if (result)
+      this.displayErrorModal();
+    else
+      this.createProject(formData, args);
+  }
+
+  gatherProjectFormData(dco) {
     const projectName = dco.getElement("[name='project-name']").value;
     return projectName;
   }
 
-  projectNameCoincides(project, projectName) {
-    return project.name === projectName;
+  validateProjectForm = (formData) => {
+    return formData === '';
+  }
+
+  displayErrorModal() {
+    console.log("Couldn't create Project");
+  }
+
+  createProject(formData, args, projectObject=Project) {
+    const formDataLowercase = formData.toLowerCase();
+    let newProject = new projectObject(formDataLowercase);
+    this.addProject(newProject);
+    args['dco'].loadProject(formDataLowercase);
+    // Add listener to todo list
+    args['listenerFunction']();
+  }
+
+  addProject(project) {
+    this.projectList.push(project);
   }
 
   searchProject(projectName) {
     return this.projectList.find(project =>
       this.projectNameCoincides(project, projectName));
+  }
+
+  projectNameCoincides(project, projectName) {
+    return project.name === projectName;
   }
 
   get projectList() {

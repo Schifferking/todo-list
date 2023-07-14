@@ -18,19 +18,11 @@ export default class PageController {
       this.handleNavbarButtons, this.getNavBarArguments());
     this.myELA.addElementListener(
       this.myDCO.getElement('.projects-list'), this.handleProjectButtons);
-    this.myELA.addElementListener(this.myDCO.getElement('.todo-list'), this.handleTodosLi);
+    this.addTodoListListener();
   }
 
-  getNavBarArguments() {
-    return { dco: this.myDCO,
-             pm: this.myPM,
-             validateFunctions: this.getValidateFunctions(),
-             handleFunction: this.handleFormButtons };
-  }
-
-  getValidateFunctions() {
-    let functions = [this.myTM.validateTodoForm, this.myPM.validateProjectForm];
-    return functions;
+  createFC() {
+    this.myFC = this.myDCO.formCreator;
   }
 
   handleNavbarButtons = (event, args) => {
@@ -40,10 +32,6 @@ export default class PageController {
       formName, args['validateFunctions']);
     this.myDCO.loadForm(formFunctions['formFunction']);
     this.myELA.addFormListener(formFunctions['validateFunction'], args);
-  }
-
-  createFC() {
-    this.myFC = this.myDCO.formCreator;
   }
 
   selectFormFunctions(formName, functions) {
@@ -57,6 +45,20 @@ export default class PageController {
     }
   }
 
+  getNavBarArguments() {
+    return { dco: this.myDCO,
+             pm: this.myPM,
+             validateFunctions: this.getValidateFunctions(),
+             handleFunction: this.handleFormButtons,
+             listenerFunction: this.addTodoListListener };
+  }
+
+  getValidateFunctions() {
+    let functions = [this.myTM.validateTodoForm,
+                     this.myPM.handleProjectCreation];
+    return functions;
+  }
+
   handleFormButtons = (event, validateFunction, args) => {
     let buttonType = this.myDCO.getAttributeFrom(event.target, 'type');
     if (buttonType === 'button')
@@ -65,36 +67,44 @@ export default class PageController {
       validateFunction(event, args);
   }
 
-  handleProjectButtons = (event) => {
-    let className = this.myDCO.getAttributeFrom(event.target, 'className');
-    if (className === 'project-button') {
-      let projectName = this.myDCO.getAttributeFrom(event.target, 'innerText');
-      this.myDCO.replaceProjectContainer(projectName, { pm: this.myPM });
-      this.myELA.addElementListener(
-        this.myDCO.getElement('.todo-list'), this.handleTodosLi);
-    }
+  addTodoListListener = () => {
+    this.myELA.addElementListener(
+      this.myDCO.getElement('.todo-list'), this.handleTodosLi);
   }
 
   handleTodosLi = (event) => {
     let nodeName = this.myDCO.getAttributeFrom(event.target, 'nodeName');
-    if (nodeName !== 'BUTTON') {
-      let todoChildren = event.target.children.length;
-      if (todoChildren == 2)
-        this.expandTodo(event);
-      else if (todoChildren > 2)
-        this.collapseTodo(event.target);
-    }
+    let projectObject = this.getProjectObject();
+    if (nodeName !== 'BUTTON')
+      this.handleTodo(event.target, projectObject);
+    else if (event.target.className === 'delete')
+      this.removeTodo(event.target.parentElement, projectObject);
   }
 
-  expandTodo(event) {
+  getProjectObject() {
     let projectName = this.myDCO.getCurrentProjectName();
-    let projectObject = this.myPM.searchProject(projectName);
-    let todoTitle = this.myDCO.obtainTodoTitle(event.target);
-    let todoObject = projectObject.searchTodo(todoTitle);
+    return this.myPM.searchProject(projectName);    
+  }
+
+  handleTodo(element, projectObject) {
+    let todoObject = this.getTodoObject(element, projectObject);
+    let todoChildren = element.children.length;
+    if (todoChildren == 3)
+      this.expandTodo(element, todoObject);
+    else if (todoChildren > 3)
+      this.collapseTodo(element);
+  }
+
+  getTodoObject(element, projectObject) {
+    let todoTitle = this.myDCO.obtainTodoTitle(element);
+    return projectObject.searchTodo(todoTitle);
+  }
+
+  expandTodo(element, todoObject) {
     let todoRemainingData = {
       dueDate: todoObject.dueDate, priority: todoObject.priority};
     // maybe add a button that allows to edit the todo.
-    this.myDCO.updateTodo(event.target, todoRemainingData);
+    this.myDCO.updateTodo(element, todoRemainingData);
     // add something later to mark the todo as complete (think about adding
     //   a new completed property in todo object)
   }
@@ -102,5 +112,21 @@ export default class PageController {
   collapseTodo(element) {
     let lastParagraph = element.lastChild;
     this.myDCO.removeElement(lastParagraph);
+  }
+
+  removeTodo(element, projectObject) {
+    let todoObject = this.getTodoObject(element, projectObject);
+    projectObject.removeTodo(todoObject);
+    // make this line a method when adding mark complete logic
+    this.myDCO.removeElement(element);
+  }
+
+  handleProjectButtons = (event) => {
+    let className = this.myDCO.getAttributeFrom(event.target, 'className');
+    if (className === 'project-button') {
+      let projectName = this.myDCO.getAttributeFrom(event.target, 'innerText');
+      this.myDCO.replaceProjectContainer(projectName, { pm: this.myPM });
+      this.addTodoListListener();
+    }
   }
 }
