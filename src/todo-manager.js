@@ -36,7 +36,7 @@ export default class TodoManager {
     let projectName = dco.getCurrentProjectName();
     let projectObject = pm.searchProject(projectName);
     projectObject.addTodo(newTodo);
-    dco.loadTodo(dco.createTodo(newTodo.title, newTodo.description));
+    dco.loadTodo(dco.createTodo(newTodo.title, newTodo.dueDate));
     dco.removeForm();
   }
 

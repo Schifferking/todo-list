@@ -1,4 +1,6 @@
 import FormCreator from "./form-creator.js";
+import format from "date-fns/format";
+import parseISO from 'date-fns/parseISO';
 
 export default class DOMCreator {
   constructor(formCreatorObject=FormCreator) {
@@ -167,7 +169,7 @@ export default class DOMCreator {
   createTodos(todos) {
     let liTodos = [];
     for (let todo of todos)
-      liTodos.push(this.createTodo(todo.title, todo.description));
+      liTodos.push(this.createTodo(todo.title, todo.dueDate));
     return liTodos;
   }
 
@@ -205,14 +207,21 @@ export default class DOMCreator {
     return projectClassName.split('-')[0];
   }
 
-  createTodo(title, description) {
+  createTodo(title, dueDate) {
+    let dateFormatted = this.formatDate(dueDate);
     let createButton = this.createButton('Mark complete');
     let deleteButton = this.createButton('Delete', {className: 'delete'});
     let todoInfo = this.createParagraph(
-      `Title: ${title}, Description: ${description}`);
+      `Title: ${title}, Due date: ${dateFormatted}`);
     let li = this.createLi(createButton);
     this.appendListElements(li, [deleteButton, todoInfo]);
     return li;
+  }
+
+  formatDate(date) {
+    let dateFormat = 'MM/dd/yyyy HH:mm a';
+    let dateParsed = parseISO(date);
+    return format(dateParsed, dateFormat);
   }
 
   createParagraph(content) {
@@ -235,7 +244,8 @@ export default class DOMCreator {
 
   updateTodo(todoElement, todoData) {
     let p = this.createParagraph(
-      `Due date: ${todoData['dueDate']}, priority: ${todoData['priority']}`);
+      `Description: ${todoData['description']},
+       priority: ${todoData['priority']}`);
     todoElement.appendChild(p);
   }
 

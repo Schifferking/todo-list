@@ -4,7 +4,8 @@
   "description": "A simple app to CRUD to-do lists.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,11 @@
   },
   "homepage": "https://github.com/Schifferking/todo-list#readme",
   "devDependencies": {
+    "html-webpack-plugin": "^5.5.3",
     "webpack": "^5.87.0",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "date-fns": "^2.30.0"
   }
 }

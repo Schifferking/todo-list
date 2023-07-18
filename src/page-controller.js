@@ -102,7 +102,8 @@ export default class PageController {
 
   expandTodo(element, todoObject) {
     let todoRemainingData = {
-      dueDate: todoObject.dueDate, priority: todoObject.priority};
+      description: todoObject.description,
+      priority: todoObject.priority};
     // maybe add a button that allows to edit the todo.
     this.myDCO.updateTodo(element, todoRemainingData);
     // add something later to mark the todo as complete (think about adding
