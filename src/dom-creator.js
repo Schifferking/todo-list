@@ -72,7 +72,9 @@ export default class DOMCreator {
     }
   }
 
-  getElement(query) {
+  getElement(query, element='') {
+    if (element)
+      return element.querySelector(query);
     return document.querySelector(query);
   }
 
@@ -253,7 +255,9 @@ export default class DOMCreator {
     return element[attribute];
   }
 
-  getElements(query) {
+  getElements(query, element='') {
+    if (element)
+      return Array.from(element.querySelectorAll(query));
     return Array.from(document.querySelectorAll(query));
   }
 
@@ -265,5 +269,28 @@ export default class DOMCreator {
   updateTodoLi(paragraph, todoObject) {
     paragraph.textContent = `Title: ${todoObject.title},
                              due date: ${this.formatDate(todoObject.dueDate)}`;
+  }
+
+  getTodoParagraphsList(todoLi) {
+    return this.getElements('p', todoLi);
+  }
+
+  isTodoCollapsed(todoLi) {
+    let todoParagraphs = this.getTodoParagraphsList(todoLi);
+    return todoParagraphs.length <= 1;
+  }
+
+  expandTodo(element, todoObject) {
+    let todoRemainingData = {
+      description: todoObject.description,
+      priority: todoObject.priority};
+    this.updateTodo(element, todoRemainingData);
+    // add something later to mark the todo as complete (think about adding
+    //   a new completed property in todo object)
+  }
+
+  collapseTodo(element) {
+    let lastParagraph = element.lastChild;
+    this.removeElement(lastParagraph);
   }
 }

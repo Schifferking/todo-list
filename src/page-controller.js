@@ -91,30 +91,15 @@ export default class PageController {
 
   handleTodo(element, projectObject) {
     let todoObject = this.getTodoObject(element, projectObject);
-    let todoChildren = element.children.length;
-    if (todoChildren == 3)
-      this.expandTodo(element, todoObject);
-    else if (todoChildren > 3)
-      this.collapseTodo(element);
+    if (this.myDCO.isTodoCollapsed(element))
+      this.myDCO.expandTodo(element, todoObject);
+    else
+      this.myDCO.collapseTodo(element);
   }
 
   getTodoObject(element, projectObject) {
     let todoTitle = this.myDCO.obtainTodoTitle(element);
     return projectObject.searchTodo(todoTitle);
-  }
-
-  expandTodo(element, todoObject) {
-    let todoRemainingData = {
-      description: todoObject.description,
-      priority: todoObject.priority};
-    this.myDCO.updateTodo(element, todoRemainingData);
-    // add something later to mark the todo as complete (think about adding
-    //   a new completed property in todo object)
-  }
-
-  collapseTodo(element) {
-    let lastParagraph = element.lastChild;
-    this.myDCO.removeElement(lastParagraph);
   }
 
   removeTodo(element, projectObject) {

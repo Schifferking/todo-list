@@ -54,8 +54,13 @@ export default class TodoManager {
   editTodo(formData, dco, projectObject, args) {
     let todoObject = args['todoObject'];
     let todoP = dco.getTodoParagraph(todoObject.title);
+    let todoLi = todoP.parentElement;
     todoObject.updateProperties(formData);
     projectObject.updateTodo(todoObject);
     dco.updateTodoLi(todoP, todoObject);
+    if (!dco.isTodoCollapsed(todoLi)) {
+      dco.collapseTodo(todoLi);
+      dco.expandTodo(todoLi, todoObject);
+    }
   }
 }
