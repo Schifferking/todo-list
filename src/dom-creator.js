@@ -65,10 +65,10 @@ export default class DOMCreator {
 
   loadForm = (createFormFunction) => {
     if (this.getElement('form') === null) {
-      let main = this.getElement('main');
+      let todoList = this.getElement('.todo-list');
       const cancelButton = this.createButton('Cancel', {type: 'button'});
       const form = createFormFunction(cancelButton);
-      main.appendChild(form);
+      todoList.parentNode.insertBefore(form, todoList);
     }
   }
 
@@ -209,7 +209,7 @@ export default class DOMCreator {
 
   createTodo(title, dueDate) {
     let dateFormatted = this.formatDate(dueDate);
-    let createButton = this.createButton('Mark complete');
+    let createButton = this.createButton('Edit', {className: 'edit'});
     let deleteButton = this.createButton('Delete', {className: 'delete'});
     let todoInfo = this.createParagraph(
       `Title: ${title}, Due date: ${dateFormatted}`);
@@ -251,5 +251,19 @@ export default class DOMCreator {
 
   getAttributeFrom(element, attribute) {
     return element[attribute];
+  }
+
+  getElements(query) {
+    return Array.from(document.querySelectorAll(query));
+  }
+
+  getTodoParagraph(title) {
+    let todoParagraphs = this.getElements('.todo-list > li > p:first-of-type');
+    return todoParagraphs.find(p => p.textContent.includes(`Title: ${title}`));
+  }
+
+  updateTodoLi(paragraph, todoObject) {
+    paragraph.textContent = `Title: ${todoObject.title},
+                             due date: ${this.formatDate(todoObject.dueDate)}`;
   }
 }

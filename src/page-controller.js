@@ -50,7 +50,8 @@ export default class PageController {
              pm: this.myPM,
              validateFunctions: this.getValidateFunctions(),
              handleFunction: this.handleFormButtons,
-             listenerFunction: this.addTodoListListener };
+             listenerFunction: this.addTodoListListener,
+             actionFunction: this.myTM.addTodoToProject };
   }
 
   getValidateFunctions() {
@@ -79,6 +80,8 @@ export default class PageController {
       this.handleTodo(event.target, projectObject);
     else if (event.target.className === 'delete')
       this.removeTodo(event.target.parentElement, projectObject);
+    else if (event.target.className === 'edit')
+      this.editTodo(event.target.parentElement, projectObject);
   }
 
   getProjectObject() {
@@ -104,7 +107,6 @@ export default class PageController {
     let todoRemainingData = {
       description: todoObject.description,
       priority: todoObject.priority};
-    // maybe add a button that allows to edit the todo.
     this.myDCO.updateTodo(element, todoRemainingData);
     // add something later to mark the todo as complete (think about adding
     //   a new completed property in todo object)
@@ -120,6 +122,20 @@ export default class PageController {
     projectObject.removeTodo(todoObject);
     // make this line a method when adding mark complete logic
     this.myDCO.removeElement(element);
+  }
+
+  editTodo(liElement, projectObject) {
+    let args = this.getEditTodoArgs(liElement, projectObject);
+    this.myDCO.loadForm(this.myFC.createToDoForm);
+    this.myELA.addFormListener(this.myTM.validateTodoForm, args);
+  }
+
+  getEditTodoArgs(liElement, projectObject) {
+    return { dco: this.myDCO,
+             pm: this.myPM,
+             handleFunction: this.handleFormButtons,
+             actionFunction: this.myTM.editTodo,
+             todoObject: this.getTodoObject(liElement, projectObject) };
   }
 
   handleProjectButtons = (event) => {

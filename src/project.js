@@ -4,10 +4,6 @@ export default class Project {
     this.todos = [];
   }
 
-  addTodo(todo) {
-    this.todos.push(todo);
-  }
-
   get name() {
     return this._name;
   }
@@ -24,6 +20,10 @@ export default class Project {
     this._todos = value;
   }
 
+  addTodo(todo) {
+    this.todos.push(todo);
+  }
+
   searchTodo(todoTitle) {
     return this.todos.find(todo => todo.title === todoTitle);
   }
@@ -37,5 +37,10 @@ export default class Project {
   getTodoIndex(todoObject) {
     return this.todos.findIndex(todo =>
       JSON.stringify(todo) === JSON.stringify(todoObject));
+  }
+
+  updateTodo(todoObject) {
+    let todoIndex = this.getTodoIndex(todoObject);
+    this.todos[todoIndex] = todoObject;
   }
 }

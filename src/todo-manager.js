@@ -2,14 +2,18 @@ import Todo from './todo.js';
 
 export default class TodoManager {
   validateTodoForm = (event, args) => {
-    let formData = this.gatherTodoFormData(event, args['dco']);
+    let dco = args['dco'];
+    let formData = this.gatherTodoFormData(event, dco);
     let result = this.validateFormData(formData);
     if (result) {
       // Add something to notify error to user (maybe use a modal)
       console.log("Couldn't create To-do");
       return;
     }
-    this.addTodoToProject(formData, args);
+    let pm = args['pm'];
+    let projectObject = this.getProjectObject(dco, pm);
+    args['actionFunction'](formData, dco, projectObject, args);
+    dco.removeForm();
   }
 
   gatherTodoFormData = (event, dco) => {
@@ -29,15 +33,15 @@ export default class TodoManager {
     return values.some(value => value === '');
   }
 
-  addTodoToProject(formData, args) {
-    let pm = args['pm'];
-    let dco = args['dco'];
+  addTodoToProject = (formData, dco, projectObject, args) => {
     let newTodo = this.createTodo(formData);
-    let projectName = dco.getCurrentProjectName();
-    let projectObject = pm.searchProject(projectName);
     projectObject.addTodo(newTodo);
     dco.loadTodo(dco.createTodo(newTodo.title, newTodo.dueDate));
-    dco.removeForm();
+  }
+
+  getProjectObject(dco, pm) {
+    let projectName = dco.getCurrentProjectName();
+    return pm.searchProject(projectName);
   }
 
   createTodo(formData) {
@@ -45,5 +49,13 @@ export default class TodoManager {
                       description: formData['description'],
                       dueDate: formData['dueDate'],
                       priority: formData['priority'] });
+  }
+
+  editTodo(formData, dco, projectObject, args) {
+    let todoObject = args['todoObject'];
+    let todoP = dco.getTodoParagraph(todoObject.title);
+    todoObject.updateProperties(formData);
+    projectObject.updateTodo(todoObject);
+    dco.updateTodoLi(todoP, todoObject);
   }
 }

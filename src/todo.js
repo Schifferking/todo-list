@@ -5,4 +5,9 @@ export default class Todo {
     this.dueDate = args['dueDate'];
     this.priority = args['priority'];
   }
+
+  updateProperties(formData) {
+    for (let key of Object.keys(this))
+      this[key] = formData[key];
+  }
 }
