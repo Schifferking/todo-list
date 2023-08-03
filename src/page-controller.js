@@ -2,6 +2,8 @@ import DOMCreator from './dom-creator.js';
 import EventListenerAgregator from './event-listener-agregator.js';
 import ProjectManager from './project-manager.js';
 import TodoManager from './todo-manager.js';
+import Project from './project.js';
+import Todo from './todo.js';
 
 export default class PageController {
   constructor() {
@@ -14,6 +16,7 @@ export default class PageController {
   loadPage() {
     this.createFC();
     this.myDCO.loadPage();
+    this.loadData();
     this.myELA.addNavbarListener(
       this.handleNavbarButtons, this.getNavBarArguments());
     this.myELA.addElementListener(
@@ -23,6 +26,76 @@ export default class PageController {
 
   createFC() {
     this.myFC = this.myDCO.formCreator;
+  }
+
+  // Move to another module (start)
+  loadData() {
+    if (this.isDataStored())
+      this.loadObjects();
+    this.handleDefaultProject();
+  }
+
+  isDataStored() {
+    return localStorage.length >= 1;
+  }
+
+  loadObjects() {
+    let objects = this.getData();
+    let projects = this.getObjects(objects, '_name');
+    let todos = this.getObjects(objects, 'title');
+    this.loadProjects(projects, todos);
+  }
+
+  getData() {
+    let objects = [];
+    for (let key of Object.keys(localStorage)) {
+      let object = this.createObject(JSON.parse(localStorage.getItem(key)));
+      objects.push(object);
+    }
+    return objects;
+  }
+
+  createObject(objectParsed) {
+    if (objectParsed['_name'])
+      return new Project(objectParsed['_name']);
+    else
+      return new Todo(objectParsed);
+  }
+
+  getObjects(objects, propertyName) {
+    return objects.filter(object => object.hasOwnProperty(propertyName));
+  }
+
+  loadProjects(projects, todos) {
+    for (let project of projects) {
+      this.loadTodos(project, todos);
+      this.myPM.addProject(project);
+      if (project.name !== 'default')
+        this.myDCO.addProjectToSidebar(project.name);
+    }
+  }
+
+  loadTodos(project, todos) {
+    let projectTodos = this.getProjectTodos(project, todos);
+    project.addTodos(projectTodos);
+  }
+
+  getProjectTodos(project, todos) {
+    return todos.filter(todo => todo.project === project.name);
+  }
+
+  handleDefaultProject() {
+    if (!localStorage.getItem('default')) {
+      let defaultProject = new Project('default');
+      this.myPM.addProject(defaultProject);
+      defaultProject.save();
+    }
+    this.loadDefaultProject();
+  }
+
+  // Move to another module (end)
+  loadDefaultProject() {
+    this.myDCO.loadDefaultProject({pm: this.myPM});
   }
 
   handleNavbarButtons = (event, args) => {

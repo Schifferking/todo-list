@@ -127,17 +127,12 @@ export default class DOMCreator {
 
   createProjectsList() {
     let projectsList = this.createUl('projects-list');
-    let defaultButton = this.createButton(
-      'default', { className: 'project-button' });
-    projectsList.appendChild(this.createLi(defaultButton));
     return projectsList;
   }
 
   createMain() {
     const main = document.createElement('main');
     let content = this.createDiv('content');
-    const defaultContainer = this.createProjectContainer('default-container')
-    content.appendChild(defaultContainer);
     main.appendChild(content);
     this.script.parentNode.insertBefore(main, this.script);
   }
@@ -162,7 +157,7 @@ export default class DOMCreator {
     let todoList = this.createUl('todo-list');
     if (args['pm']) {
       let projectObject = args['pm'].searchProject(projectName);
-      let todos = this.createTodos(projectObject.todos);
+      let todos = this.createTodos(projectObject['_todos']);
       this.appendListElements(todoList, todos);
     }
     return todoList;
@@ -180,10 +175,22 @@ export default class DOMCreator {
     this.script.parentNode.insertBefore(footer, this.script);
   }
 
+  loadDefaultProject(args) {
+    const defaultContainer = this.createProjectContainer('default-container', args);
+    let projectsList = this.getElement('.projects-list');
+    let defaultButton = this.createButton('default', { className: 'project-button' });
+    this.loadProjectContainer(defaultContainer);
+    projectsList.appendChild(this.createLi(defaultButton));
+  }
+
+  loadProjectContainer(projectContainer) {
+    let content = this.getElement('.content');
+    content.appendChild(projectContainer);
+  }
+
   loadProject(formData) {
     this.replaceProjectContainer(`${formData}-container`);
     this.addProjectToSidebar(formData);
-    this.removeForm();
   }
 
   removeProjectContainer() {

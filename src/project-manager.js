@@ -3,7 +3,6 @@ import Project from './project.js';
 export default class ProjectManager {
   constructor(projectObject=Project) {
     this.projectList = [];
-    this.addProject(new projectObject('default'));
   }
 
   handleProjectCreation = (event, args) => {
@@ -11,7 +10,7 @@ export default class ProjectManager {
     const formData = this.gatherProjectFormData(args['dco']);
     let result = this.validateProjectForm(formData);
     if (result)
-      this.displayErrorModal();
+      this.notifyError();
     else
       this.createProject(formData, args);
   }
@@ -25,21 +24,25 @@ export default class ProjectManager {
     return formData === '';
   }
 
-  displayErrorModal() {
+  notifyError() {
     console.log("Couldn't create Project");
   }
 
   createProject(formData, args, projectObject=Project) {
     const formDataLowercase = formData.toLowerCase();
     let newProject = new projectObject(formDataLowercase);
+    newProject.save();
     this.addProject(newProject);
-    args['dco'].loadProject(formDataLowercase);
-    // Add listener to todo list
-    args['listenerFunction']();
+    this.loadProject(formDataLowercase, args['dco'], args['listenerFunction']);
   }
 
   addProject(project) {
     this.projectList.push(project);
+  }
+
+  loadProject(projectName, dco, listener) {
+    dco.loadProject(projectName);
+    listener();
   }
 
   searchProject(projectName) {

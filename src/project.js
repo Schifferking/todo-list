@@ -20,6 +20,11 @@ export default class Project {
     this._todos = value;
   }
 
+  addTodos(todos) {
+    for (let todo of todos)
+      this.addTodo(todo);
+  }
+
   addTodo(todo) {
     this.todos.push(todo);
   }
@@ -29,9 +34,11 @@ export default class Project {
   }
 
   removeTodo(todoObject) {
+    this.delete(todoObject.title);
     let todoIndex = this.getTodoIndex(todoObject);
     this.todos = this.todos.slice(0, todoIndex).
       concat(this.todos.slice(todoIndex + 1));
+    this.save();
   }
 
   getTodoIndex(todoObject) {
@@ -42,5 +49,13 @@ export default class Project {
   updateTodo(todoObject) {
     let todoIndex = this.getTodoIndex(todoObject);
     this.todos[todoIndex] = todoObject;
+  }
+
+  save() {
+    localStorage.setItem(this.name, JSON.stringify(this));
+  }
+
+  delete(todoName) {
+    localStorage.removeItem(todoName);
   }
 }
