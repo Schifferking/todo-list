@@ -47,7 +47,7 @@ export default class FormCreator {
     return inputs;
   }
 
-  createInput(name, type='') {
+  createInput(name, type='text') {
     const input = document.createElement('input');
     let attributes = ['name', 'required'];
     let values = [name, ''];

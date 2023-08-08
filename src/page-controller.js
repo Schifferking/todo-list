@@ -152,9 +152,9 @@ export default class PageController {
     if (nodeName !== 'BUTTON')
       this.handleTodo(event.target, projectObject);
     else if (event.target.className === 'delete')
-      this.removeTodo(event.target.parentElement, projectObject);
+      this.removeTodo(this.getTodoLi(event.target), projectObject);
     else if (event.target.className === 'edit')
-      this.editTodo(event.target.parentElement, projectObject);
+      this.editTodo(this.getTodoLi(event.target), projectObject);
   }
 
   getProjectObject() {
@@ -173,6 +173,10 @@ export default class PageController {
   getTodoObject(element, projectObject) {
     let todoTitle = this.myDCO.obtainTodoTitle(element);
     return projectObject.searchTodo(todoTitle);
+  }
+
+  getTodoLi(buttonElement) {
+    return buttonElement.parentElement.parentElement;
   }
 
   removeTodo(element, projectObject) {

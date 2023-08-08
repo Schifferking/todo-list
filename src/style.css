@@ -1,0 +1,191 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #a9a9a9;
+  display: grid;
+  grid-template-columns: 1fr 7fr;
+  grid-template-rows: 1fr 8fr;
+}
+
+.navbar {
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 1%;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 1%;
+}
+
+.navbar > button,
+.form-buttons-container > button {
+  background-color: #a9a9a9;
+  background-repeat: no-repeat;
+  border: none;
+  border-radius: 10px;
+}
+
+.navbar > button {
+  background-size: 64px;
+  padding: 32px;
+}
+
+.navbar > button:hover,
+.form-buttons-container > button:hover {
+  background-color: #898989;
+  transition: 0.3s;
+}
+
+.navbar > button:focus-visible,
+.form-buttons-container > button:focus-visible {
+  outline: 3px solid #000000;
+  transition: 0.3s;
+}
+
+.navbar > button:active,
+.form-buttons-container > button:active {
+  background-color: #ffffff;
+  transition: 0.3s;
+}
+
+.new-to-do {
+  background-image: url('./icons/add.svg');
+}
+
+.new-project {
+  background-image: url('./icons/add-folder.svg');
+}
+
+header {
+  border-bottom: 3px solid #000000;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.sidebar {
+  padding-left: 10%;
+  border-right: 3px solid #000000;
+}
+
+h1 {
+  font-size: 2rem;
+  padding: 1%;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-left: 2%;
+}
+
+.projects-list > li > button {
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+}
+
+.projects-list > li > button:hover,
+button[type]:hover,
+input[type='submit']:hover {
+  background-color: #898989;
+  color: #ffffff;
+  transition: 0.3s;
+}
+
+.projects-list > li > button:focus-visible {
+  outline: 3px solid #000000;
+  transition: 0.3s;
+}
+
+.projects-list > li > button:active,
+button[type]:active,
+input[type='submit']:active {
+  background-color: #ffffff;
+  color: #000000;
+  transition: 0.3s;
+}
+
+form,
+label {
+  display: flex;
+}
+
+form {
+  gap: 1.5rem;
+  margin: 2% 1%;
+}
+
+label {
+  gap: 1rem;
+}
+
+input[name],
+input[type],
+button[type],
+label {
+  font-size: 1rem;
+}
+
+input,
+button[type] {
+  border: none;
+  border-radius: 10px;
+}
+
+input:focus-visible,
+button[type]:focus-visible {
+  outline: 3px solid #000000;
+  transition: 0.3s;
+}
+
+input[type='text']:invalid {
+  border: 3px solid #ff0000;
+  transition: 0.3s;
+}
+
+input[type='datetime-local']:valid,
+input[type='number']:valid,
+input[type='text']:valid {
+  border: 3px solid #008000;
+  transition: 0.3s;
+}
+
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-left: 0;
+}
+
+.todo-list > li {
+  border: 3px solid #000000;
+  border-radius: 10px;
+  margin: 0 1%;
+  padding: 1rem;
+}
+
+.form-buttons-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.form-buttons-container > button {
+  background-size: 60px;
+  border: 2px solid #000000;
+  padding: 30px;
+}
+
+.edit {
+  background-image: url('./icons/edit.svg');
+}
+
+.delete {
+  background-image: url('./icons/delete.svg');
+}
+
+p {
+  font-size: 1.5rem;
+}

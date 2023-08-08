@@ -43,9 +43,8 @@ export default class DOMCreator {
   createNavbar() {
     // Consider adding more elements
     let ul = this.createUl('navbar');
-    let todoButton = this.createButton('New to-do', {className: 'new-to-do'});
-    let projectButton = this.createButton('New project',
-      {className: 'new-project'});
+    let todoButton = this.createButton('', {className: 'new-to-do'});
+    let projectButton = this.createButton('', {className: 'new-project'});
     let listElements = [todoButton, projectButton];
     this.appendListElements(ul, listElements);
     return ul;
@@ -118,6 +117,7 @@ export default class DOMCreator {
 
   createSidebar() {
     let nav = document.createElement('nav');
+    nav.classList.add('sidebar');
     const projectsH1 = this.createHeading('Projects', 'h1');
     let projectsList = this.createProjectsList();
     let listElements = [projectsH1, projectsList];
@@ -218,12 +218,14 @@ export default class DOMCreator {
 
   createTodo(title, dueDate) {
     let dateFormatted = this.formatDate(dueDate);
-    let createButton = this.createButton('Edit', {className: 'edit'});
-    let deleteButton = this.createButton('Delete', {className: 'delete'});
+    let buttonsContainer = this.createDiv('form-buttons-container');
+    let createButton = this.createButton('', {className: 'edit'});
+    let deleteButton = this.createButton('', {className: 'delete'});
+    this.appendListElements(buttonsContainer, [createButton, deleteButton]);
     let todoInfo = this.createParagraph(
       `Title: ${title}, Due date: ${dateFormatted}`);
-    let li = this.createLi(createButton);
-    this.appendListElements(li, [deleteButton, todoInfo]);
+    let li = this.createLi(buttonsContainer);
+    li.appendChild(todoInfo);
     return li;
   }
 
