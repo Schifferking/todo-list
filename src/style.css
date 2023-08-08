@@ -153,6 +153,10 @@ input[type='text']:valid {
   transition: 0.3s;
 }
 
+.content > div {
+  padding: 1%;
+}
+
 .todo-list {
   display: flex;
   flex-direction: column;
@@ -160,10 +164,9 @@ input[type='text']:valid {
   padding-left: 0;
 }
 
-.todo-list > li {
+.todo-li {
   border: 3px solid #000000;
   border-radius: 10px;
-  margin: 0 1%;
   padding: 1rem;
 }
 

@@ -109,9 +109,11 @@ export default class DOMCreator {
     return headingElement;
   }
 
-  createLi(element) {
+  createLi(element, className='') {
     let li = document.createElement('li');
     li.appendChild(element);
+    if (className)
+      li.classList.add(className);
     return li;
   }
 
@@ -224,7 +226,7 @@ export default class DOMCreator {
     this.appendListElements(buttonsContainer, [createButton, deleteButton]);
     let todoInfo = this.createParagraph(
       `Title: ${title}, Due date: ${dateFormatted}`);
-    let li = this.createLi(buttonsContainer);
+    let li = this.createLi(buttonsContainer, 'todo-li');
     li.appendChild(todoInfo);
     return li;
   }

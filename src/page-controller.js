@@ -163,11 +163,12 @@ export default class PageController {
   }
 
   handleTodo(element, projectObject) {
-    let todoObject = this.getTodoObject(element, projectObject);
-    if (this.myDCO.isTodoCollapsed(element))
-      this.myDCO.expandTodo(element, todoObject);
+    let todoLi = this.getTodoLi(element);
+    let todoObject = this.getTodoObject(todoLi, projectObject);
+    if (this.myDCO.isTodoCollapsed(todoLi))
+      this.myDCO.expandTodo(todoLi, todoObject);
     else
-      this.myDCO.collapseTodo(element);
+      this.myDCO.collapseTodo(todoLi);
   }
 
   getTodoObject(element, projectObject) {
@@ -175,8 +176,10 @@ export default class PageController {
     return projectObject.searchTodo(todoTitle);
   }
 
-  getTodoLi(buttonElement) {
-    return buttonElement.parentElement.parentElement;
+  getTodoLi(element) {
+    if (element.classList.contains('todo-li'))
+      return element;
+    return this.getTodoLi(element.parentElement);
   }
 
   removeTodo(element, projectObject) {
