@@ -51,11 +51,11 @@ ul {
 }
 
 .new-to-do {
-  background-image: url('./icons/add.svg');
+  background-image: url("./icons/add.svg");
 }
 
 .new-project {
-  background-image: url('./icons/add-folder.svg');
+  background-image: url("./icons/add-folder.svg");
 }
 
 header {
@@ -89,7 +89,7 @@ h1 {
 
 .projects-list > li > button:hover,
 button[type]:hover,
-input[type='submit']:hover {
+input[type="submit"]:hover {
   background-color: #898989;
   color: #ffffff;
   transition: 0.3s;
@@ -102,7 +102,7 @@ input[type='submit']:hover {
 
 .projects-list > li > button:active,
 button[type]:active,
-input[type='submit']:active {
+input[type="submit"]:active {
   background-color: #ffffff;
   color: #000000;
   transition: 0.3s;
@@ -141,14 +141,15 @@ button[type]:focus-visible {
   transition: 0.3s;
 }
 
-input[type='text']:invalid {
+input[type="text"]:invalid,
+input[type="number"]:invalid {
   border: 3px solid #ff0000;
   transition: 0.3s;
 }
 
-input[type='datetime-local']:valid,
-input[type='number']:valid,
-input[type='text']:valid {
+input[type="datetime-local"]:valid,
+input[type="number"]:valid,
+input[type="text"]:valid {
   border: 3px solid #008000;
   transition: 0.3s;
 }
@@ -182,11 +183,11 @@ input[type='text']:valid {
 }
 
 .edit {
-  background-image: url('./icons/edit.svg');
+  background-image: url("./icons/edit.svg");
 }
 
 .delete {
-  background-image: url('./icons/delete.svg');
+  background-image: url("./icons/delete.svg");
 }
 
 p {

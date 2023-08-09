@@ -1,11 +1,11 @@
-import FormCreator from "./form-creator.js";
 import format from "date-fns/format";
-import parseISO from 'date-fns/parseISO';
+import parseISO from "date-fns/parseISO";
+import FormCreator from "./form-creator";
 
 export default class DOMCreator {
-  constructor(formCreatorObject=FormCreator) {
-    this.script = document.querySelector('script');
-    this.formCreator = new formCreatorObject();
+  constructor(FormCreatorObject = FormCreator) {
+    this.script = document.querySelector("script");
+    this.formCreator = new FormCreatorObject();
   }
 
   get script() {
@@ -32,9 +32,9 @@ export default class DOMCreator {
   }
 
   createHeader() {
-    let header = document.createElement('header');
-    let nav = document.createElement('nav');
-    let navbar = this.createNavbar();
+    const header = document.createElement("header");
+    const nav = document.createElement("nav");
+    const navbar = this.createNavbar();
     header.appendChild(nav);
     nav.appendChild(navbar);
     this.script.parentNode.insertBefore(header, this.script);
@@ -42,53 +42,48 @@ export default class DOMCreator {
 
   createNavbar() {
     // Consider adding more elements
-    let ul = this.createUl('navbar');
-    let todoButton = this.createButton('', {className: 'new-to-do'});
-    let projectButton = this.createButton('', {className: 'new-project'});
-    let listElements = [todoButton, projectButton];
+    const ul = this.createUl("navbar");
+    const todoButton = this.createButton("", { className: "new-to-do" });
+    const projectButton = this.createButton("", { className: "new-project" });
+    const listElements = [todoButton, projectButton];
     this.appendListElements(ul, listElements);
     return ul;
   }
 
-  createUl(className='') {
-    const ul = document.createElement('ul');
-    if (className)
-      ul.classList.add(className);
+  createUl(className = "") {
+    const ul = document.createElement("ul");
+    if (className) ul.classList.add(className);
     return ul;
   }
 
   appendListElements(list, elements) {
-    for (let element of elements)
-      list.appendChild(element);
+    elements.map(element => list.appendChild(element));
   }
 
   loadForm = (createFormFunction) => {
-    if (this.getElement('form') === null) {
-      let todoList = this.getElement('.todo-list');
-      const cancelButton = this.createButton('Cancel', {type: 'button'});
+    if (this.getElement("form") === null) {
+      const todoList = this.getElement(".todo-list");
+      const cancelButton = this.createButton("Cancel", { type: "button" });
       const form = createFormFunction(cancelButton);
       todoList.parentNode.insertBefore(form, todoList);
     }
-  }
+  };
 
-  getElement(query, element='') {
-    if (element)
-      return element.querySelector(query);
+  getElement(query, element = "") {
+    if (element) return element.querySelector(query);
     return document.querySelector(query);
   }
 
-  createButton(content, args={}) {
-    let newButton = document.createElement('button');
+  createButton(content, args = {}) {
+    const newButton = document.createElement("button");
     newButton.textContent = content;
-    if (args['type'])
-      newButton.setAttribute('type', args['type']);
-    if (args['className'])
-      newButton.classList.add(args['className']);
+    if (args.type) newButton.setAttribute("type", args.type);
+    if (args.className) newButton.classList.add(args.className);
     return newButton;
   }
 
   removeForm() {
-    const form = this.getElement('form');
+    const form = this.getElement("form");
     this.removeElement(form);
   }
 
@@ -97,96 +92,100 @@ export default class DOMCreator {
   }
 
   addProjectToSidebar(projectName) {
-    let projectsList = this.getElement('.projects-list');
-    const newProject = this.createButton(
-      projectName, { className: 'project-button' });
+    const projectsList = this.getElement(".projects-list");
+    const newProject = this.createButton(projectName, {
+      className: "project-button",
+    });
     projectsList.appendChild(this.createLi(newProject));
   }
 
   createHeading(content, heading) {
-    let headingElement = document.createElement(heading);
+    const headingElement = document.createElement(heading);
     headingElement.textContent = content;
     return headingElement;
   }
 
-  createLi(element, className='') {
-    let li = document.createElement('li');
+  createLi(element, className = "") {
+    const li = document.createElement("li");
     li.appendChild(element);
-    if (className)
-      li.classList.add(className);
+    if (className) li.classList.add(className);
     return li;
   }
 
   createSidebar() {
-    let nav = document.createElement('nav');
-    nav.classList.add('sidebar');
-    const projectsH1 = this.createHeading('Projects', 'h1');
-    let projectsList = this.createProjectsList();
-    let listElements = [projectsH1, projectsList];
+    const nav = document.createElement("nav");
+    nav.classList.add("sidebar");
+    const projectsH1 = this.createHeading("Projects", "h1");
+    const projectsList = this.createProjectsList();
+    const listElements = [projectsH1, projectsList];
     this.appendListElements(nav, listElements);
     this.script.parentNode.insertBefore(nav, this.script);
   }
 
   createProjectsList() {
-    let projectsList = this.createUl('projects-list');
+    const projectsList = this.createUl("projects-list");
     return projectsList;
   }
 
   createMain() {
-    const main = document.createElement('main');
-    let content = this.createDiv('content');
+    const main = document.createElement("main");
+    const content = this.createDiv("content");
     main.appendChild(content);
     this.script.parentNode.insertBefore(main, this.script);
   }
 
-  createProjectContainer(projectClassName, args={}) {
+  createProjectContainer(projectClassName, args = {}) {
     // Consider a method in another module to change this line
-    let projectName = projectClassName.replace('-container', '');
-    let projectContainer = this.createDiv(projectClassName);
-    let projectHeading = this.createHeading(projectName, 'h1');
-    let todoList = this.loadTodos(projectName, args);
+    const projectName = projectClassName.replace("-container", "");
+    const projectContainer = this.createDiv(projectClassName);
+    const projectHeading = this.createHeading(projectName, "h1");
+    const todoList = this.loadTodos(projectName, args);
     this.appendListElements(projectContainer, [projectHeading, todoList]);
     return projectContainer;
   }
 
   createDiv(className) {
-    let div = document.createElement('div');
+    const div = document.createElement("div");
     div.classList.add(className);
     return div;
   }
-  
+
   loadTodos(projectName, args) {
-    let todoList = this.createUl('todo-list');
-    if (args['pm']) {
-      let projectObject = args['pm'].searchProject(projectName);
-      let todos = this.createTodos(projectObject['_todos']);
+    const todoList = this.createUl("todo-list");
+    if (args.pm) {
+      const projectObject = args.pm.searchProject(projectName);
+      const todos = this.createTodos(projectObject._todos);
       this.appendListElements(todoList, todos);
     }
     return todoList;
   }
 
   createTodos(todos) {
-    let liTodos = [];
-    for (let todo of todos)
-      liTodos.push(this.createTodo(todo.title, todo.dueDate));
+    const liTodos = [];
+    todos.map(todo => liTodos.push(this.createTodo(todo.title, todo.dueDate)));
     return liTodos;
   }
 
   createFooter() {
-    const footer = document.createElement('footer');
+    const footer = document.createElement("footer");
     this.script.parentNode.insertBefore(footer, this.script);
   }
 
   loadDefaultProject(args) {
-    const defaultContainer = this.createProjectContainer('default-container', args);
-    let projectsList = this.getElement('.projects-list');
-    let defaultButton = this.createButton('default', { className: 'project-button' });
+    const defaultContainer = this.createProjectContainer(
+      "default-container",
+      args,
+    );
+    const projectsList = this.getElement(".projects-list");
+    const defaultButton = this.createButton("default", {
+      className: "project-button",
+    });
     this.loadProjectContainer(defaultContainer);
     projectsList.appendChild(this.createLi(defaultButton));
   }
 
   loadProjectContainer(projectContainer) {
-    let content = this.getElement('.content');
+    const content = this.getElement(".content");
     content.appendChild(projectContainer);
   }
 
@@ -201,64 +200,68 @@ export default class DOMCreator {
   }
 
   getCurrentProjectContainer() {
-    return this.getElement('.content > div');
+    return this.getElement(".content > div");
   }
 
-  replaceProjectContainer(projectClassName, args={}) {
-    let content = this.getElement('.content');
-    let newProjectContainer = this.createProjectContainer(
-      projectClassName, args);
+  replaceProjectContainer(projectClassName, args = {}) {
+    const content = this.getElement(".content");
+    const newProjectContainer = this.createProjectContainer(
+      projectClassName,
+      args,
+    );
     this.removeProjectContainer();
     content.appendChild(newProjectContainer);
   }
 
   getCurrentProjectName() {
     const projectContainer = this.getCurrentProjectContainer();
-    let projectClassName = projectContainer.className;
-    return projectClassName.split('-')[0];
+    const projectClassName = projectContainer.className;
+    return projectClassName.split("-")[0];
   }
 
   createTodo(title, dueDate) {
-    let dateFormatted = this.formatDate(dueDate);
-    let buttonsContainer = this.createDiv('form-buttons-container');
-    let createButton = this.createButton('', {className: 'edit'});
-    let deleteButton = this.createButton('', {className: 'delete'});
+    const dateFormatted = this.formatDate(dueDate);
+    const buttonsContainer = this.createDiv("form-buttons-container");
+    const createButton = this.createButton("", { className: "edit" });
+    const deleteButton = this.createButton("", { className: "delete" });
     this.appendListElements(buttonsContainer, [createButton, deleteButton]);
-    let todoInfo = this.createParagraph(
-      `Title: ${title}, Due date: ${dateFormatted}`);
-    let li = this.createLi(buttonsContainer, 'todo-li');
+    const todoInfo = this.createParagraph(
+      `Title: ${title}, Due date: ${dateFormatted}`,
+    );
+    const li = this.createLi(buttonsContainer, "todo-li");
     li.appendChild(todoInfo);
     return li;
   }
 
   formatDate(date) {
-    let dateFormat = 'MM/dd/yyyy HH:mm a';
-    let dateParsed = parseISO(date);
+    const dateFormat = "MM/dd/yyyy HH:mm a";
+    const dateParsed = parseISO(date);
     return format(dateParsed, dateFormat);
   }
 
   createParagraph(content) {
-    let paragraph = document.createElement('p');
+    const paragraph = document.createElement("p");
     paragraph.textContent = content;
     return paragraph;
   }
 
   loadTodo(todo) {
-    let todoList = this.getElement('.todo-list');
+    const todoList = this.getElement(".todo-list");
     todoList.appendChild(todo);
   }
 
   obtainTodoTitle(liElement) {
-    let todoInfo = liElement.querySelector('p');
-    let todoTitle = todoInfo.textContent.split(',');
-    todoTitle = todoTitle[0].split(': ');
+    const todoInfo = liElement.querySelector("p");
+    let todoTitle = todoInfo.textContent.split(",");
+    todoTitle = todoTitle[0].split(": ");
     return todoTitle[1];
   }
 
   updateTodo(todoElement, todoData) {
-    let p = this.createParagraph(
-      `Description: ${todoData['description']},
-       priority: ${todoData['priority']}`);
+    const p = this.createParagraph(
+      `Description: ${todoData.description},
+       priority: ${todoData.priority}`,
+    );
     todoElement.appendChild(p);
   }
 
@@ -266,42 +269,45 @@ export default class DOMCreator {
     return element[attribute];
   }
 
-  getElements(query, element='') {
-    if (element)
-      return Array.from(element.querySelectorAll(query));
+  getElements(query, element = "") {
+    if (element) return Array.from(element.querySelectorAll(query));
     return Array.from(document.querySelectorAll(query));
   }
 
   getTodoParagraph(title) {
-    let todoParagraphs = this.getElements('.todo-list > li > p:first-of-type');
-    return todoParagraphs.find(p => p.textContent.includes(`Title: ${title}`));
+    const todoParagraphs = this.getElements(".todo-list > li > p:first-of-type");
+    return todoParagraphs.find((p) =>
+      p.textContent.includes(`Title: ${title}`),
+    );
   }
 
   updateTodoLi(paragraph, todoObject) {
-    paragraph.textContent = `Title: ${todoObject.title},
+    const paragraphCopy = paragraph;
+    paragraphCopy.textContent = `Title: ${todoObject.title},
                              due date: ${this.formatDate(todoObject.dueDate)}`;
   }
 
   getTodoParagraphsList(todoLi) {
-    return this.getElements('p', todoLi);
+    return this.getElements("p", todoLi);
   }
 
   isTodoCollapsed(todoLi) {
-    let todoParagraphs = this.getTodoParagraphsList(todoLi);
+    const todoParagraphs = this.getTodoParagraphsList(todoLi);
     return todoParagraphs.length <= 1;
   }
 
   expandTodo(element, todoObject) {
-    let todoRemainingData = {
+    const todoRemainingData = {
       description: todoObject.description,
-      priority: todoObject.priority};
+      priority: todoObject.priority,
+    };
     this.updateTodo(element, todoRemainingData);
     // add something later to mark the todo as complete (think about adding
     //   a new completed property in todo object)
   }
 
   collapseTodo(element) {
-    let lastParagraph = element.lastChild;
+    const lastParagraph = element.lastChild;
     this.removeElement(lastParagraph);
   }
 }

@@ -1,4 +1,4 @@
-export default class Project {  
+export default class Project {
   constructor(name) {
     this.name = name;
     this.todos = [];
@@ -21,8 +21,7 @@ export default class Project {
   }
 
   addTodos(todos) {
-    for (let todo of todos)
-      this.addTodo(todo);
+    todos.map((todo) => this.addTodo(todo));
   }
 
   addTodo(todo) {
@@ -30,24 +29,26 @@ export default class Project {
   }
 
   searchTodo(todoTitle) {
-    return this.todos.find(todo => todo.title === todoTitle);
+    return this.todos.find((todo) => todo.title === todoTitle);
   }
 
   removeTodo(todoObject) {
     this.delete(todoObject.title);
-    let todoIndex = this.getTodoIndex(todoObject);
-    this.todos = this.todos.slice(0, todoIndex).
-      concat(this.todos.slice(todoIndex + 1));
+    const todoIndex = this.getTodoIndex(todoObject);
+    this.todos = this.todos
+      .slice(0, todoIndex)
+      .concat(this.todos.slice(todoIndex + 1));
     this.save();
   }
 
   getTodoIndex(todoObject) {
-    return this.todos.findIndex(todo =>
-      JSON.stringify(todo) === JSON.stringify(todoObject));
+    return this.todos.findIndex(
+      (todo) => JSON.stringify(todo) === JSON.stringify(todoObject),
+    );
   }
 
   updateTodo(todoObject) {
-    let todoIndex = this.getTodoIndex(todoObject);
+    const todoIndex = this.getTodoIndex(todoObject);
     this.todos[todoIndex] = todoObject;
   }
 

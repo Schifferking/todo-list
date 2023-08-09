@@ -1,20 +1,20 @@
-import Todo from './todo.js';
+import Todo from "./todo";
 
 export default class TodoManager {
   validateTodoForm = (event, args) => {
-    let dco = args['dco'];
-    let formData = this.gatherTodoFormData(event, dco);
-    let result = this.validateFormData(formData);
+    const { dco } = args;
+    const formData = this.gatherTodoFormData(event, dco);
+    const result = this.validateFormData(formData);
     if (result) {
       // Add something to notify error to user (maybe use a modal)
       console.log("Couldn't create To-do");
       return;
     }
-    let pm = args['pm'];
-    let projectObject = this.getProjectObject(dco, pm);
-    args['actionFunction'](formData, dco, projectObject, args);
+    const { pm } = args;
+    const projectObject = this.getProjectObject(dco, pm);
+    args.actionFunction(formData, dco, projectObject, args);
     dco.removeForm();
-  }
+  };
 
   gatherTodoFormData = (event, dco) => {
     event.preventDefault();
@@ -23,43 +23,47 @@ export default class TodoManager {
     const todoDueDate = dco.getElement("[name='todo-dueDate']").value;
     const todoPriority = dco.getElement("[name='todo-priority']").value;
     const todoProject = dco.getCurrentProjectName();
-    return { title: todoTitle, 
-             description: todoDescription,
-             dueDate: todoDueDate,
-             priority: todoPriority,
-             project: todoProject };
-  }
+    return {
+      title: todoTitle,
+      description: todoDescription,
+      dueDate: todoDueDate,
+      priority: todoPriority,
+      project: todoProject,
+    };
+  };
 
   validateFormData(formData) {
-    let values = Object.values(formData);
-    return values.some(value => value === '');
+    const values = Object.values(formData);
+    return values.some((value) => value === "");
   }
 
-  addTodoToProject = (formData, dco, projectObject, args) => {
-    let newTodo = this.createTodo(formData);
+  addTodoToProject = (formData, dco, projectObject) => {
+    const newTodo = this.createTodo(formData);
     newTodo.save();
     projectObject.addTodo(newTodo);
     projectObject.save();
     dco.loadTodo(dco.createTodo(newTodo.title, newTodo.dueDate));
-  }
+  };
 
   getProjectObject(dco, pm) {
-    let projectName = dco.getCurrentProjectName();
+    const projectName = dco.getCurrentProjectName();
     return pm.searchProject(projectName);
   }
 
   createTodo(formData) {
-    return new Todo({ title: formData['title'],
-                      description: formData['description'],
-                      dueDate: formData['dueDate'],
-                      priority: formData['priority'],
-                      project: formData['project'] });
+    return new Todo({
+      title: formData.title,
+      description: formData.description,
+      dueDate: formData.dueDate,
+      priority: formData.priority,
+      project: formData.project,
+    });
   }
 
   editTodo(formData, dco, projectObject, args) {
-    let todoObject = args['todoObject'];
-    let todoP = dco.getTodoParagraph(todoObject.title);
-    let todoLi = todoP.parentElement;
+    const { todoObject } = args;
+    const todoP = dco.getTodoParagraph(todoObject.title);
+    const todoLi = todoP.parentElement;
     todoObject.updateProperties(formData);
     todoObject.save();
     projectObject.updateTodo(todoObject);

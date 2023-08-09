@@ -1,39 +1,35 @@
-import Project from './project.js';
+import Project from "./project";
 
 export default class ProjectManager {
-  constructor(projectObject=Project) {
+  constructor() {
     this.projectList = [];
   }
 
   handleProjectCreation = (event, args) => {
     event.preventDefault();
-    const formData = this.gatherProjectFormData(args['dco']);
-    let result = this.validateProjectForm(formData);
-    if (result)
-      this.notifyError();
-    else
-      this.createProject(formData, args);
-  }
+    const formData = this.gatherProjectFormData(args.dco);
+    const result = this.validateProjectForm(formData);
+    if (result) this.notifyError();
+    else this.createProject(formData, args);
+  };
 
   gatherProjectFormData(dco) {
     const projectName = dco.getElement("[name='project-name']").value;
     return projectName;
   }
 
-  validateProjectForm = (formData) => {
-    return formData === '';
-  }
+  validateProjectForm = (formData) => formData === "";
 
   notifyError() {
     console.log("Couldn't create Project");
   }
 
-  createProject(formData, args, projectObject=Project) {
+  createProject(formData, args, ProjectObject = Project) {
     const formDataLowercase = formData.toLowerCase();
-    let newProject = new projectObject(formDataLowercase);
+    const newProject = new ProjectObject(formDataLowercase);
     newProject.save();
     this.addProject(newProject);
-    this.loadProject(formDataLowercase, args['dco'], args['listenerFunction']);
+    this.loadProject(formDataLowercase, args.dco, args.listenerFunction);
   }
 
   addProject(project) {
@@ -46,8 +42,9 @@ export default class ProjectManager {
   }
 
   searchProject(projectName) {
-    return this.projectList.find(project =>
-      this.projectNameCoincides(project, projectName));
+    return this.projectList.find((project) =>
+      this.projectNameCoincides(project, projectName),
+    );
   }
 
   projectNameCoincides(project, projectName) {

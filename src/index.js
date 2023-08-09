@@ -1,5 +1,5 @@
-import PageController from "./page-controller.js";
-import './style.css';
+import PageController from "./page-controller";
+import "./style.css";
 
-const myPageController = new PageController;
+const myPageController = new PageController();
 myPageController.loadPage();
